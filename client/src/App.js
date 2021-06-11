@@ -1,0 +1,11 @@
+import React from "react";
+import Dashboard from "./components/Dashboard";
+import Login from "./components/Login";
+
+const code = new URLSearchParams(window.location.search).get("code");
+
+const App = () => {
+  return code ? <Dashboard code={code} /> : <Login />;
+};
+
+export default App;
