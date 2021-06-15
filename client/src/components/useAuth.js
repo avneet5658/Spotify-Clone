@@ -20,16 +20,22 @@ const useAuth = (code) => {
       });
   }, [code]);
   useEffect(() => {
-    axios
-      .post("http://localhost:5000/refresh", { refreshToken })
-      .then((res) => {
-        setAccessToken(res.data.accessToken);
-        setExpiresIn(res.data.expiresIn);
-      })
-      .catch((err) => {
-        window.location = "/";
-        console.log(err);
-      });
+    if (!refreshToken || !expiresIn) return;
+    console.log("refresh " + refreshToken, expiresIn);
+
+    const interval = setInterval(() => {
+      axios
+        .post("http://localhost:5000/refresh", { refreshToken })
+        .then((res) => {
+          setAccessToken(res.data.accessToken);
+          setExpiresIn(res.data.expiresIn);
+        })
+        .catch((err) => {
+          window.location = "/";
+          console.log(err);
+        });
+    }, (expiresIn - 60) * 1000);
+    return () => clearInterval(interval);
   }, [refreshToken, expiresIn]);
   return accessToken;
 };
